@@ -18,13 +18,39 @@ const cubeMesh = new THREE.Mesh(
   cubeMaterial
 )
 scene.add(cubeMesh)
+////////////////////
+// Create the outline
+//const outlineGeometry = new THREE.BoxGeometry(1.05, 1.05, 1.05); // Slightly larger dimensions
+//const outlineMaterial = new THREE.MeshBasicMaterial({
+//  color: "black",
+//  wireframe: true,
+//});
+//const outlineMesh = new THREE.Mesh(outlineGeometry, outlineMaterial);
+//scene.add(outlineMesh);
+///////////////////////////////////////
 
+//commenting out the persepective camera and instantiating a new OrthographicCamera
 // initialize the camera
 const camera = new THREE.PerspectiveCamera(
   75, 
   window.innerWidth / window.innerHeight,
   0.5,
   200)
+
+//ned aspectRatio for orthographic Camera otherwise you get weird stretching effects
+//need to multiply the each of the parameters provided for camera left,right
+//const aspectRatio = window.innerWidth / window.innerHeight
+
+
+//const camera = new THREE.OrthographicCamera(
+//  -1 * aspectRatio,
+//  1 * aspectRatio,
+//  1 ,
+//  -1 ,
+//  0.1, //camera near
+//  200 // camera far
+//)
+
 
 //exploring basics of camera near and camera far which are the lower and upper bounds of where you can view the scene
 //currently with camera.position.z = 5, the camera and the actual object itself are 5 distance units away
@@ -55,7 +81,9 @@ renderer.setSize(window.innerWidth, window.innerHeight)
 
 //instantiate the controls
 const controls = new OrbitControls(camera, canvas) //canvas variable is pointing towards the renderer.domElement
-
+//set enableDamping on the controls property to give a sense of weight to the controls
+controls.enableDamping = true
+controls.autoRotate = true
 
 
 //need to snyc the render function call to defices refresh rate for a smooth experience
@@ -63,9 +91,32 @@ const controls = new OrbitControls(camera, canvas) //canvas variable is pointing
 //need to include the renderer.render(scene, camera)
 //also need to include the set redersize before the decalred orbit controls
 
+
+
+
+//instead of having the renderloop function handle the resizing we can window 'resize' event listener to handle this
+//this is better becuse the camera.aspect is updating everyframe even when I don't need it do that.
+//only need to update the aspect ratio when it happens, hence the use of the event listener
+window.addEventListener("resize", () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  console.log(camera.aspect)
+  //must call the updateProjectionMatrix method whenever the camera parameters change
+  camera.updateProjectionMatrix()
+}
+)
 const renderloop = () => {
+  //including the aspect property in the renderloop and also the updateProjection Matrix to avoid unwanted stretching and buggy responsiveness
+ //camera.aspect = window.innerWidth / window.innerHeight;
+ //console.log(camera.aspect)
+ ////must call the updateProjectionMatrix method whenever the camera parameters change
+ //camera.updateProjectionMatrix()
+
+  //setting the size of the renderer with the setSize method within the renderloop so that it updates
+  renderer.setSize(window.innerWidth, window.innerHeight)
+
+  controls.update()
   renderer.render(scene, camera)
-  console.log('renderloop') //
+  console.log('renderloop') // 
   window.requestAnimationFrame(renderloop)
 }
 renderloop()
