@@ -71,13 +71,16 @@ camera.position.z = 5
 // initialize the renderer
 const canvas = document.querySelector('canvas.threejs')
 const renderer = new THREE.WebGLRenderer({
-  canvas: canvas
+  canvas: canvas,
+  antialias: true //this is the software solution for anti-aliasing
 })
-
-
-
 renderer.setSize(window.innerWidth, window.innerHeight)
-
+//logging the pixel ratio, check website
+//console.log(window.devicePixelRatio)
+//create variable to store the min pixel ratio of 2 to not go over board with the pixel ratio if some devices support 4k
+//this solution of declaring the min pixel ratio is the hardwre solution
+const maxPixelRatio = Math.min(window.devicePixelRatio, 2);
+renderer.setPixelRatio(maxPixelRatio)
 
 //instantiate the controls
 const controls = new OrbitControls(camera, canvas) //canvas variable is pointing towards the renderer.domElement
@@ -116,7 +119,7 @@ const renderloop = () => {
 
   controls.update()
   renderer.render(scene, camera)
-  console.log('renderloop') // 
+  //console.log('renderloop') // 
   window.requestAnimationFrame(renderloop)
 }
 renderloop()
