@@ -10,10 +10,10 @@ const cubeMaterial = new THREE.MeshBasicMaterial({ color: "red", wireframe: true
 
 const sphereMaterial = new THREE.MeshBasicMaterial({color: "blue", wireframe: true})
 
-const cubeGeometry = new THREE.BoxGeometry(1,1,1, 2,2,2) //the second set of 3 arguments are the widthSegment, heightSegements, and depthSegments
+const cubeGeometry = new THREE.BoxGeometry(1,1,1, 8,8,8) //the second set of 3 arguments are the widthSegment, heightSegements, and depthSegments
 
 
-const sphereGeometry= new THREE.SphereGeometry(.7, 8, 8)
+const sphereGeometry= new THREE.SphereGeometry(.7, 16, 16)
 
 
 
