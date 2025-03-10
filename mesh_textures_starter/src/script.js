@@ -8,13 +8,34 @@ const pane = new Pane();
 // initialize the scene
 const scene = new THREE.Scene();
 
+//init the loader
+const textureLoader = new THREE.TextureLoader();
+
+
+
 // initialize the geometry
 const geometry = new THREE.BoxGeometry(1, 1, 1);
 const torusKnotGeometry = new THREE.TorusKnotGeometry(0.5, 0.15, 100, 16);
 const planeGeometry = new THREE.PlaneGeometry(1, 1);
+//creating a sphere & cylinder
+const sphereGeometry = new THREE.SphereGeometry(0.5, 32, 32);
+const cylinderGeometry = new THREE.CylinderGeometry(0.5, 0.5, 1, 32)
+
+//init the texture
+const textureTest = textureLoader.load('textures/whispy-grass-meadow-bl/wispy-grass-meadow_albedo.png');
+
+
 
 // initialize the material
 const material = new THREE.MeshBasicMaterial();
+material.map = textureTest
+material.color = new THREE.Color('Red')
+
+
+
+//init a group
+const group = new THREE.Group();
+
 
 // initialize the mesh
 const cube = new THREE.Mesh(geometry, material);
@@ -23,15 +44,31 @@ const knot = new THREE.Mesh(torusKnotGeometry, material);
 knot.position.x = 1.5;
 
 const plane = new THREE.Mesh(planeGeometry, material);
+plane.material.side = THREE.DoubleSide
 plane.position.x = -1.5;
 
+const sphere = new THREE.Mesh();
+sphere.geometry = sphereGeometry;
+sphere.material = material;
+sphere.position.y = 1.5
+
+const cylinder = new THREE.Mesh();
+cylinder.geometry = cylinderGeometry;
+cylinder.material = material;
+cylinder.position.y = -1.5
+
+
 // add the mesh to the scene
-scene.add(cube);
-scene.add(knot);
-scene.add(plane);
+//scene.add(cube);
+//scene.add(knot);
+//scene.add(plane);
+//scene.add(sphere, cylinder)
+
+group.add(sphere, cylinder, cube, knot, plane);
+scene.add(group)
 
 // initialize the light
-const light = new THREE.AmbientLight(0xffffff, 0.4);
+const light = new THREE.AmbientLight(0xffffff, 0.02);
 scene.add(light);
 
 const pointLight = new THREE.PointLight(0xffffff, 1.2);
@@ -66,8 +103,21 @@ window.addEventListener("resize", () => {
   renderer.setSize(window.innerWidth, window.innerHeight);
 });
 
+
+
+
+
 // render the scene
 const renderloop = () => {
+
+  //issue with this is if my array of children from the parent mesh has alot to iterate through, it can cause problems.
+  //to solve this, create a group and instead of scene.children it would be group.children
+  group.children.forEach((child) => {
+    if (child instanceof THREE.Mesh) {
+      child.rotation.y += 0.01
+    }
+  })
+
   controls.update();
   renderer.render(scene, camera);
   window.requestAnimationFrame(renderloop);
