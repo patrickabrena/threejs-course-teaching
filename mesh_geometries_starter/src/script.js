@@ -55,7 +55,7 @@ const camera = new THREE.PerspectiveCamera(
   0.1,
   200
 );
-camera.position.z = 5;
+camera.position.z = 10;
 
 // initialize the renderer
 const canvas = document.querySelector("canvas.threejs");

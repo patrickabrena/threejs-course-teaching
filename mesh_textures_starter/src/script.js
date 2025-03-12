@@ -16,7 +16,7 @@ const textureLoader = new THREE.TextureLoader();
 // initialize the geometry
 const geometry = new THREE.BoxGeometry(1, 1, 1);
 const torusKnotGeometry = new THREE.TorusKnotGeometry(0.5, 0.15, 100, 16);
-const planeGeometry = new THREE.PlaneGeometry(1, 1);
+const planeGeometry = new THREE.PlaneGeometry(2, 2);
 //creating a sphere & cylinder
 const sphereGeometry = new THREE.SphereGeometry(0.5, 32, 32);
 const cylinderGeometry = new THREE.CylinderGeometry(0.5, 0.5, 1, 32)
@@ -24,12 +24,13 @@ const cylinderGeometry = new THREE.CylinderGeometry(0.5, 0.5, 1, 32)
 //init the texture
 const textureTest = textureLoader.load('textures/whispy-grass-meadow-bl/wispy-grass-meadow_albedo.png');
 
-
+const axisHelper = new THREE.AxesHelper();
+scene.add(axisHelper);
 
 // initialize the material
 const material = new THREE.MeshBasicMaterial();
 material.map = textureTest
-material.color = new THREE.Color('Red')
+
 
 
 
@@ -45,8 +46,11 @@ knot.position.x = 1.5;
 
 const plane = new THREE.Mesh(planeGeometry, material);
 plane.material.side = THREE.DoubleSide
-plane.position.x = -1.5;
-
+//plane.position.x = -1.5;
+//rotating the plane about the x axis
+plane.rotation.x = Math.PI * 0.5 // Pi is 180 degrees so to rotate it flat we need half
+//setting the scale next
+plane.scale.set(10, 10)
 const sphere = new THREE.Mesh();
 sphere.geometry = sphereGeometry;
 sphere.material = material;
@@ -64,7 +68,8 @@ cylinder.position.y = -1.5
 //scene.add(plane);
 //scene.add(sphere, cylinder)
 
-group.add(sphere, cylinder, cube, knot, plane);
+//group.add(sphere, cylinder, cube, knot, plane);
+group.add(plane)
 scene.add(group)
 
 // initialize the light
@@ -82,7 +87,8 @@ const camera = new THREE.PerspectiveCamera(
   0.1,
   200
 );
-camera.position.z = 10;
+camera.position.z = 50;
+camera.position.y = 50;
 
 // initialize the renderer
 const canvas = document.querySelector("canvas.threejs");
@@ -112,11 +118,11 @@ const renderloop = () => {
 
   //issue with this is if my array of children from the parent mesh has alot to iterate through, it can cause problems.
   //to solve this, create a group and instead of scene.children it would be group.children
-  group.children.forEach((child) => {
-    if (child instanceof THREE.Mesh) {
-      child.rotation.y += 0.01
-    }
-  })
+ //group.children.forEach((child) => {
+ //  if (child instanceof THREE.Mesh) {
+ //    child.rotation.y += 0.01
+ //  }
+ //})
 
   controls.update();
   renderer.render(scene, camera);
